@@ -1,0 +1,64 @@
+    // it will handle overtime for 24 hours
+    // Set the shift start and end times
+    $shift_start_time = new DateTime('08:00:00');
+    $shift_end_time = new DateTime('16:00:00');
+    $user_leave_time = new DateTime('07:59:00');
+
+    if ($shift_start_time < $shift_end_time) {
+        // Calculate the total hours worked
+        if ($user_leave_time > $shift_start_time) {
+
+            $total_hours_worked = $shift_start_time->diff($user_leave_time)->format('%h.%i');  // employee total hours 9
+            // return $total_hours_worked;
+            // Calculate the scheduled hours
+            $scheduled_hours = $shift_start_time->diff($shift_end_time)->format('%h.%i');  // schedule hours/shifthour  8
+            // return $scheduled_hours;
+            // Calculate the overtime hours
+            $overtime_hours = max(0, $total_hours_worked - $scheduled_hours);  // overtime 1 
+            $time = explode('.', $overtime_hours);
+        if(isset($time[1])){
+            $overtime = new DateTime($time[0] . ':' . $time[1]);
+            return $overtime->format('H:i:s');
+        }
+        else{
+            $overtime = new DateTime($time[0] . ':00:00');
+            return $overtime->format('H:i:s');
+
+        }
+        } else {
+            $total_hours_worked = $shift_start_time->diff($user_leave_time->modify('+1 day'))->format('%h.%i');  // employee total hours 9
+            // return $total_hours_worked;
+            // Calculate the scheduled hours
+            $scheduled_hours = $shift_start_time->diff($shift_end_time)->format('%h.%i');  // schedule hours/shifthour  8
+            // return $scheduled_hours;
+            // Calculate the overtime hours
+            $overtime_hours = max(0, $total_hours_worked - $scheduled_hours);  // overtime 1 
+            $time = explode('.', $overtime_hours);
+        if(isset($time[1])){
+            $overtime = new DateTime($time[0] . ':' . $time[1]);
+            return $overtime->format('H:i:s');
+        }
+        else{
+            $overtime = new DateTime($time[0] . ':00:00');
+            return $overtime->format('H:i:s');
+        }
+            
+        }
+    } else {
+        $total_hours_worked = $shift_start_time->diff($user_leave_time->modify('+1 day'))->format('%h.%i');  
+
+        // Calculate the scheduled hours
+        $scheduled_hours = $shift_start_time->diff($shift_end_time->modify('+1 day'))->format('%h.%i');
+
+        $overtime_hours = max(0, $total_hours_worked - $scheduled_hours);  // overtime 1 
+        $time = explode('.', $overtime_hours);
+        if(isset($time[1])){
+            $overtime = new DateTime($time[0] . ':' . $time[1]);
+            return $overtime->format('H:i:s');
+        }
+        else{
+            $overtime = new DateTime($time[0] . ':00:00');
+            return $overtime->format('H:i:s');
+
+        }
+    }
